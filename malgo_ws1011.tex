@@ -1,0 +1,94 @@
+\documentclass[11pt]{article}
+\newcommand{\pns}{nichts\"attigende Pushes\ }
+\newcommand{\ps}{s\"attigende Pushes\ }
+
+\author{Christian Kniep}
+\title{Methoden der Algorithmik WS1011 \\ Prof. Dr. Michael Kaufmann}
+\date{\today}
+%----------------------------
+\begin{document}
+\maketitle
+\section{Vorlesung 10.11.2010}
+\subsection{Wiederholung}
+\begin{itemize}
+    \item Anzahl \ps: $\leq n*m$
+    \item Anzahl \pns: $\leq O(n^2*m)$
+    \item Anzahl Relabel: $\leq 2n$
+\end{itemize}
+
+\subsection{Lemma}
+Wir haben h\"ochstens $\leq O(n^2*m)$ \pns.
+\subsection{Beweis}
+Benutzen Potentialfunktion $\phi = \displaystyle\sum_{v \in A} d(v)$.(A=Menge aller aktiven Knoten) \\
+Da $|A| \leq n, d(v) \leq$ f\"ur alle $v \ in V$ und $\phi \leq 2n^2$ anfangs.\\
+Am Ende ist $\phi = 0$.
+\begin{enumerate}
+    \item \textbf{Relabel} \\
+        $\phi$ steigt um $\leq \epsilon$, wenn  d(v) um $\epsilon$ steigt.\\
+        Insgesamt steigt d(v) um $\leq 2n$, also insgesamt steigt $\phi$ um $\leq 2n^2$.
+    \item \textbf{\ps} \\
+        Diese erzeugen \"uber (v,w) vtl. neuen \"Uberfluss an w, w wird somit aktiv, $\phi$ steigt um $d(w) \leq 2n$.
+        Also steigt $\phi$ durch \ps um $\leq 2n^2*m$.
+    \item \textbf{\pns} \\
+        $\phi$ wird um d(v) erniedrigt, evtl. jedoch noch um d(w) erh\"oht, falls w vorher nicht aktiv war. \\
+        Es gilt jedoch $d(v) \geq d(w) + 1 \Rightarrow \phi$ erniedrigt sich um $\geq 1$.
+\end{enumerate}
+\paragraph{Insgesammt:} \ \\
+Erh\"ohung von $\phi$ von $\leq 2n^2$ um $2n^2 + 2n^2*m$ und k Erniedrigungen von $\phi$ um $\geq 1$,\\
+f\"uhren zusammen zu 0-Potential. \\
+$\Rightarrow k = O(n^2*m), k =$ \# \pns
+
+\subsection{Satz}
+Der generische Preflow-Push-Algorithmus l\"auft in $O(n^2*m)$.
+\subsection{Varianten} Wahl der aktiven Knoten.
+\begin{enumerate}
+    \item \textbf{FIFO} \\
+        Warteschlange aktiver Knoten $O(n^3)$
+    \item \textbf{Highest Label} \\
+        'h\"ochster' Knoten im Netz $O(n^2\sqrt{m})$
+    \item \textbf{Excess Scaling} \\
+        'h\"ochster' F\"ullstand zuerst $O(n*m + log c)$, c=gr\"osste Kapazit\"at
+\end{enumerate}
+\subsection{FIFO}
+\subsubsection{Regel}
+Wende Push/Relabel solange auf denselben Knoten an, bis entweder e(v)=0 oder Relabel-Operation angewendet wurde.\\
+DIe Liste der Knoten wird als FIFO-Queue gehalten.\\
+Wird v relabelt, wird es hinten wieder angef\"ugt.
+\subsubsection{Phasen}
+Arbeiten die Liste ab, bis um ersten Mal ein Knoten erscheint, der an dieser Phase schon teilgenommen hat.
+\subsubsection{Behauptung}
+Es gibt $\leq 4n^2 + 2n$ Phasen
+\subsubsection{Beweis}
+Betrachte jeweils die \"Anderung der Potentialfunktion.\\
+$\phi = max\{d(v)|v ist aktiv\}$
+\begin{enumerate}
+    \item \textbf{Fall 1} \\
+        W\"ahrend einer Phase gibt es mindestens eine Relabel-Operation.\\
+        $\phi$ steigt h\"ochstens so viel wie der d-Wert max. (?).
+        $\Rightarrow \phi$ steigt in solchen F\"allen um $\leq 2n^2$.
+    \item \textbf{Fall 2} \\
+        Alle aktiven Knoten mit max. Distanz werden inaktiv, der maximale Distanzwert sinkt um mindestens 1.
+\end{enumerate}
+Insgesamt gibt es also $\leq \underbrace{n+2n^2 + (n+2n^2)}_{2n+4n^2}$ Pushes.
+\subsubsection{Satz}
+Der FIFO-Preflow-Push-Algorithmus l\"auft in $O(n^3)$
+
+\subsection{Highest-Label}
+\subsubsection{Regel}
+Schicke immer Fluss von einem aktiven Knoten mit h\"ochstem Distanzwert.
+\begin{enumerate}
+    \item Es gibt $O(n^3)$ \pns.\\
+        Sei $h = max\{d(v)|v aktiv\}$\\
+        Zuerst werden aktive Knoten v mit $d(v)=h$ betrachtet, \\
+        dann $h-1, h-2, usw.$
+        Bei Relabelings f\"angt das ganze neu an.\\
+        Es gibt jedoch nur $\leq 2n^2$ Relabelings.\\
+        Gibt es n \pns hintereinander, dann sind wir fertig. Alle Knoten sind dann inaktiv.
+\end{enumerate}
+Wie findet man aktive Knoten mit h\"ochstem DIstanzlabel? \\
+Halten Liste $(k) = {v | v aktiv und d(v)=k}$.\\
+Merken max. Index der den h\"ochsten d-Wert angibt. Betrachte Listen $(max)$, Listen $(max-1)$, usw...\\
+Relabel erh\"oht max.
+\subsection{Satz}
+Der Highest-Label-Preflow-Push macht $O(n^2\sqrt{m}$ \pns und hat somit $O(n^3)$ Gesamtlaufzeit.
+\end{document}
