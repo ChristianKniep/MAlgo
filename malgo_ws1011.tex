@@ -1,6 +1,15 @@
 \documentclass[11pt]{article}
+\usepackage{txfonts}
+\usepackage{verbatim}
+
 \newcommand{\pns}{nichts\"attigende Pushes\ }
 \newcommand{\ps}{s\"attigende Pushes\ }
+\newcommand{\A}{Algorithmus}
+\newcommand{\RA}{Randomisierter Algorithmus}
+\newcommand{\z}{zuf\"allig\ }
+\newcommand{\mhW}{mit hoher Wahrscheinlichkeit (m.h.W.)\ }
+\newcommand{\MCA}{Monte-Carlo Algorithm}
+\newcommand{\R}{\varmathbb{R}}
 
 \author{Christian Kniep}
 \title{Methoden der Algorithmik WS1011 \\ Prof. Dr. Michael Kaufmann}
@@ -91,4 +100,125 @@ Merken max. Index der den h\"ochsten d-Wert angibt. Betrachte Listen $(max)$, Li
 Relabel erh\"oht max.
 \subsection{Satz}
 Der Highest-Label-Preflow-Push macht $O(n^2\sqrt{m}$ \pns und hat somit $O(n^3)$ Gesamtlaufzeit.
+
+\section{Vorlesung 17.11.2010}
+\subsection{\"Uberblick randomisierte Algorithmen}
+\subsubsection{Definition} Ein \A der Entscheidungen zuf\"allig trifft heisst \RA
+\subsubsection{Vorteile}
+\begin{itemize}
+    \item Die \RA sind oft schneller als die deterministischen.
+    \item sind (oft) viel einfacher
+    \item keine oder wenige Worst-Case Eingaben
+\end{itemize}
+Es gibt zwei Typen von \RA:
+\begin{enumerate}
+    \item {\textbf Las-Vegas-Algorithmen} Liefern immer das korrekte Ergebnis! \\
+        Durch \z getroffene Entscheidung variiert die Laufzeit.\\
+        Ziel der Analyse: Laufzeit des LV Algorithmus ist \mhW $\leq X$.
+    \item {\textbf Monte-Carlo Algorithmus} Kšnnen falsches Ergebnis liefern! \\
+        Ziel der Analyse: Wahrscheinlichkeit f\"ur falsches Ergebnis $\leq X$ \mhW .
+\end{enumerate}
+F\"ur Entscheidungsprobleme gibt es 2 Arten von \MCA en.
+\begin{itemize}
+    \item {\textbf einseitiger Fehler}: Algorithmus kann sich nur in eine Richtung irren. \\
+        Z.B. ist Ergebnis von Algo. 'Ja' ist dies immer korrekt (Fehlerwahrscheinlichkeit ist 0).\\
+        ist Ergebnis 'Nein', dann ist die Fehlerwahrscheinlichkeit $\geq 0$.
+    \item {\textbf beidseitiger Fehler} Algorithmus kann sich in beide Richtungen irren. \\
+        Fehlerwahrscheinlichkeit in beiden F\"allen $\geq o$.
+\end{itemize}
+\subsubsection{Wahrscheinlichkeitstheorie}
+Sei $\Omega$ Ereignisraum. Ein Ereignis ist ELement aus $\Omega$. \\
+Wahrscheinlichkeit ist Abbilsung von Ereignissen auf reelle Zahlen, so dass die Summe \"uber alle Ereignisse $= 1$. \\
+$prob: \Omega \rightarrow \R^+_0 \sum_{w \in \Omega} prob(w) = 1$ \\
+Ist $\Omega$ endlich und es gilt $prob(w) = \frac{1}{|\Omega|}$ so heisst prob Gleichverteilung.
+
+\subsubsection{Beispiel}
+$\Omega = {1,2,3,4,5,6}$ und $prob(w) = \frac{1}{6}$ f\"ur alle $w \in \Omega$.
+$\Omega_{gerade} = {2,4,6}$ und $prob(w) \in \Omega_{gerade} = 3 \frac{1}{6} = \frac{1}{2}$
+\subsubsection{Markovsche Ungleichung}
+F\"ur bestimmtes Ereignis X und dessen Erwartungswert E(X) gilt:\\
+$prob(X \geq k*E(X)) \leq \frac{1}{k}$
+
+\newpage
+\subsection{Random Walk}
+BILD \\
+\subsubsection{Frage}
+$t_n(i) = E(Anzahl Schritte bis Abgrund erreicht) $ f\"ur $n=Feld,i=Position der Person$
+\subsubsection{Analyse}
+\paragraph{I} \ \\
+$t(0) = 0$ \\
+$t(1) = 1 + \frac{1}{2} t(0) + \frac{1}{2} t(2)$ \\
+$t(2) = 1 + \frac{1}{2} t(1) + \frac{1}{2} t(3)$ \\
+. \\
+. \\
+$t(n-1) = 1 + \frac{1}{2} t(n-2) + \frac{1}{2} t(n)$
+$t(n) = 1 + t(n-1)$
+\paragraph{II} \ \\
+$t(n-1) \leq 1 + \frac{1}{2} t(n-2) + \frac{1}{2} [ 1 + t(n-1) ] = \frac{3}{2} + \frac{1}{2} t(n-2) + \frac{1}{2} t(n-1)$ \\
+Gleichung $*2*t(n-1)$:\\
+$t(n-1) \leq 3 + t(n-2)$ \\
+$t(n-2) \leq 1 + \frac{1}{2} t(n-3) + \frac{1}{2} [3 + t(n-2)] = \frac{5}{2} + \frac{1}{2} t(n-3) + \frac{1}{2} t(n-2)$\\
+$ \leq 5 + t(n-3)$\\
+Allgemein: \\
+$t(i) \leq 2(n-1) + 1 + t(i-1)$ \\
+$t(2) \leq 2(n-2) + 1 + t(1) = 2n -3 + t(1)$ \\
+$t(1) \leq 2(n-1) + 1 + \underbrace{t(0)}_{0} = 2n-1$
+\paragraph{III}\ \\
+$t(1) \leq 2n -1$\\
+$t(2) \leq 2n -3 +  2n - 1 = 4n - 4$ \\
+$t(3) \leq 2n -5 + 4n - 4 = 6n - 9$ Vermutung: $t(i) \leq 2in -i^2$ \\
+\paragraph{Vollst\"qndige Induktion \"uber i} \ \\
+IA: gezeigt f\"ur $i = 0,1,2,3$\\
+IS: $t(i+1) \leq 2(n-(i+1)) + 1 + t(i)$\\
+$\leq 2n -2i -1 +  2ni - i^2$\\
+$\leq 2n(i+1) - (i+1)^2 \ _\square$ \\
+\\
+$\Rightarrow$ Also gilt: $t_n(n) \leq 2n^2 - n^2 = n^2$\\
+Klar ist, dass $t_n(i-1) \leq t_n(i) \forall i$, daher ist $t_1(i) \leq n^2 \forall i \leq n$ \\
+$\Rightarrow$  Random Walk terminiert in $O(n^2)$ Schritten \mhW
+\\
+\\
+Einfache Anwendung von Random Walk: 2-SAT. \\
+Gegeben: Boolscher Term in KNF, wobei alle Klauseln $\leq$ 2 Literale haben.\\
+Beispiel: $ (a_1 \vee a_2) \wedge (\bar a_3 \vee a_4) \wedge (a_5) \wedge ...$
+Gesucht: Variablenbelegung aller $a_i$ mit true/false, so dass alle Klauseln erf\"ullt sind.
+A1: $a_1=t, a_2=f,a_3=t$\\
+A2: $a_1=t, a_2=t,a_3=t$\\
+Hamming Abstand von zwei Variablenbelegungen ist die Anzahl der Variablen an denen sich die Belegung unterscheidet.
+
+\paragraph{Frage} Ist F erf\"ullbar? \\
+2-SAT von Papadimitriou (1991)\\
+\begin{enumerate}
+    \item Rate Variablenbelegung $a_1 ... a_n =: A$
+    \item Wiederhole (2$n^2$ Mal) {\\
+        if (A erf\"ullt alle Klauseln) return true\\
+        while \underline{zuf\"allig} eine Klausel C, die von A nicht erf\"ullt wird  \\
+        und w\"ahle einen der beidenen Literale aus C und \underline{negiere} den Wert. \\
+        $\Rightarrow$ dies ist neues A \\
+    }
+    \item return false; (\mhW \ nicht erf\"ullbar)
+\end{enumerate}
+\paragraph{Analyse}\ \\
+(richtige Belegung $e$ ist 'Abgrund', $\bar e$ ist ganz links an der Wand und hat gr\"ossten Hamming Abstand.) \\
+\\
+Angenommen es flipt erf\"ullende Belegung $e$ (nur eine, falls mehr ist sogar besser => mehr Abgr\"unde) \\
+$\bar e$ ist Belegung mit dem Hammingabstandn zu e (alle Variablen geflipt). \\
+\begin{itemize}
+    \item Da der Algo immer eine unerf\"ullte Klausel w\"ahlt ist klar, dass mindestens eines der beiden Literale den entgegengesetzten Wert haben muss.\\
+        D.h. beim \"Andern des richtigen Literals kommt man e um einen Schritt n\"aher, verk\"urzt somit den Hammingabstand.
+        $\Rightarrow prob$ hierf\"ur $\geq frac{1}{2}$.\\
+    \item Belegung $\bar e$ (ganz links) f\"uhrt jeder Flip zu einer besseren Belegung.
+\end{itemize}
+$\Rightarrow$ entspricht Random Walk\\
+X := bedeutet die Anzahl der Schleifendurchl\"aufe f\"ur erf\"ullbare Instanzen \\
+$E(X) \leq n^2$ \\
+Mit Mavkov-Ungleichung gilt: \\
+$prob(X \geq k*E(X)) \leq \frac{1}{k}$ \\
+In unserem Fall: \\
+$prob(X \geq 2n^2) \leq \frac{1}{2}$ \\
+
+$\Rightarrow$ Laufzeit ist O($n^2$) \\
+Algo ist MonteCarlo Algo mit einseitigem Fehler. \\
+Die Ausgabe 'false' stimmt nur mit Wahrscheinlichkeit $\geq \frac{1}{2}$
+
 \end{document}
